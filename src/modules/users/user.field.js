@@ -4,6 +4,7 @@ import {
   forgetPassword,
   logIn,
   logOut,
+  profilePic,
   register,
   resetPassword,
 } from "./user.resolve.js";
@@ -26,6 +27,13 @@ export const userMutation = {
       password: { type: GraphQLString },
     },
     resolve: logIn,
+  },
+  profilePic: {
+    type: userData,
+    args: {
+      imageUrl: { type: GraphQLString },
+    },
+    resolve: profilePic,
   },
   logOut: {
     type: GraphQLString,

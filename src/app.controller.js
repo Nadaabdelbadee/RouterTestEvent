@@ -14,13 +14,16 @@ const bootstrap = async (app, express) => {
       schema: schema,
       context: async (req, res) => {
         const authHeader = req.headers.authorization || "";
+        if (!authHeader) {
+          return { user: null };
+        }
         if (authHeader.startsWith("Bearer ")) {
           const token = authHeader.split(" ")[1];
           try {
             const user = await authentication({ authorization: token });
             return { user }; // ← ده بيوصل لكل الـ resolvers
           } catch (err) {
-            console.log("Auth error:", err.message);
+            return { user: null };
           }
         }
         return {}; // ← بدون يوزر

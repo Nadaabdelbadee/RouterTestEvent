@@ -33,6 +33,25 @@ export const logIn = async (parent, args) => {
   });
   return { token: token };
 };
+// ========================== profilePic ============================
+
+export const profilePic = async (parent, { imageUrl }, context) => {
+  console.log(context.user);
+
+  if (!context.user) {
+    throw new Error("token not found");
+  }
+  const updatedUser = userModel.findByIdAndUpdate(
+    context.user._id,
+    {
+      profilePic: {
+        secure_url: imageUrl,
+      },
+    },
+    { new: true }
+  );
+  return updatedUser;
+};
 
 // ========================== logOut ============================
 
@@ -58,7 +77,7 @@ export const logOut = async (parent, args, context) => {
 // ========================== forgetPassword ============================
 
 export const forgetPassword = async (parent, args, context) => {
-  const email  = context?.user?.email;
+  const email = context?.user?.email;
   const user = await userModel.findOne({ email, isDeleted: false });
   if (!user) {
     throw new Error("user not exist");
@@ -70,7 +89,7 @@ export const forgetPassword = async (parent, args, context) => {
 
 export const confirmOtp = async (parent, args, context) => {
   const { code } = args;
-  const  email  = context?.user?.email;
+  const email = context?.user?.email;
   const user = await userModel.findOne({ email, confirmed: false });
   if (!user) {
     throw new Error("email not exist or password already reseted", {
@@ -87,7 +106,7 @@ export const confirmOtp = async (parent, args, context) => {
 
 export const resetPassword = async (parent, args, context) => {
   const { newPassword } = args;
-  const  email  = context?.user?.email;
+  const email = context?.user?.email;
   const user = await userModel.findOne({ email, confirmed: true });
   if (!user) {
     throw new Error("email not exist or code not confirmed yet", {

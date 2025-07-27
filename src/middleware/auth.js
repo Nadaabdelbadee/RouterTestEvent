@@ -3,15 +3,18 @@ import { verify } from "../utlis/verify.js";
 
 export const authentication = async ({ authorization }) => {
   const token = authorization;
+  console.log("🚀 Token Received:", authorization);
   if (!token) {
     throw new Error("token not found", { cause: 400 });
   }
+
   let SIGNATURE = process.env.SIGNATURE;
 
   const decoded = await verify({
     token,
     SIGNATURE,
   });
+console.log(decoded);
 
   if (!decoded?.id) {
     throw new Error("invalid token payload", { cause: 400 });
@@ -20,6 +23,8 @@ export const authentication = async ({ authorization }) => {
   if (!user) {
     throw new Error("user not found", { cause: 401 });
   }
+  console.log(user);
+  
   if (parseInt(user?.changePasswordAT?.getTime() / 1000) >= decoded.iat) {
     throw new Error("expired Token", { cause: 401 });
   }

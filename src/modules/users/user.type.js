@@ -5,6 +5,13 @@ import {
   GraphQLString,
 } from "graphql";
 
+export const profilePic = new GraphQLObjectType({
+  name: "profilePic",
+  fields: {
+    secure_url: { type: GraphQLString },
+    public_id: { type: GraphQLString },
+  },
+});
 export const userData = new GraphQLObjectType({
   name: "userData",
   fields: {
@@ -14,13 +21,7 @@ export const userData = new GraphQLObjectType({
     password: { type: GraphQLString },
     isDeleted: { type: GraphQLBoolean },
     confirmed: { type: GraphQLBoolean },
-  },
-});
-export const profilePic = new GraphQLObjectType({
-  name: "profilePic",
-  fields: {
-    secure_url: { type: GraphQLString },
-    public_id: { type: GraphQLString },
+    profilePic: { type: profilePic },
   },
 });
 
