@@ -31,9 +31,10 @@ const bootstrap = async (app, express) => {
     })
   );
 
-  
   app.use((req, res, next) => {
-    return res.status(404).json({ msg: `invalid url ${req.originalUrl} ` });
+    return res
+      .status(404)
+      .json({ msg: `This router is not exist ${req.originalUrl}` });
   });
 };
 

@@ -1,11 +1,15 @@
 import { openAI } from "../../../index.js";
 import noteModel from "../../DB/models/note.model.js";
 import userModel from "../../DB/models/user.model.js";
+import { validation } from "../../middleware/validation.js";
+import { addNoteSchema } from "./note.validate.js";
 
 // ========================== addNote ============================
 
 export const addNote = async (parent, args, context) => {
   const { title, content } = args;
+  await validation({ schema: addNoteSchema, data: args });
+
   const id = context?.user?._id;
   if (!(await userModel.findById(id))) {
     throw new Error("unauthorized");
@@ -18,6 +22,8 @@ export const addNote = async (parent, args, context) => {
 
 export const deleteNote = async (parent, args, context) => {
   const { _id } = args;
+    await validation({ schema: idNoteSchema, data: args });
+  
   const id = context?.user?._id;
   if (!(await userModel.findById(id))) {
     throw new Error("unauthorized");
@@ -29,6 +35,7 @@ export const deleteNote = async (parent, args, context) => {
 
 export const getNote = async (parent, args, context) => {
   const { _id } = args;
+    await validation({ schema: idNoteSchema, data: args });
   const id = context?.user?._id;
   if (!(await userModel.findById(id))) {
     throw new Error("unauthorized");

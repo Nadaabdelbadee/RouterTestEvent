@@ -1,12 +1,20 @@
 import userModel from "../../DB/models/user.model.js";
+import { validation } from "../../middleware/validation.js";
 import { comparePass } from "../../utlis/compare.js";
 import { eventEmitter } from "../../utlis/eventsendEmail.js";
 import { generateToken } from "../../utlis/generateToken.js";
 import { Hash } from "../../utlis/hash.js";
+import {
+  confirmOtpSchema,
+  logInSchema,
+  newPasswordSchema,
+  registerSchema,
+} from "./user.validate.js";
 // ========================== register ============================
 
 export const register = async (parent, args) => {
   const { userName, email, password } = args;
+  await validation({ schema: registerSchema, data: args });
   if (await userModel.findOne({ email })) {
     throw new Error("user already exist");
   }
@@ -18,6 +26,7 @@ export const register = async (parent, args) => {
 
 export const logIn = async (parent, args) => {
   const { email, password } = args;
+  await validation({ schema: logInSchema, data: args });
   const user = await userModel.findOne({ email, isDeleted: false });
   if (!user) {
     throw new Error("user not exist");
@@ -89,6 +98,8 @@ export const forgetPassword = async (parent, args, context) => {
 
 export const confirmOtp = async (parent, args, context) => {
   const { code } = args;
+  await validation({ schema: confirmOtpSchema, data: args });
+
   const email = context?.user?.email;
   const user = await userModel.findOne({ email, confirmed: false });
   if (!user) {
@@ -106,6 +117,8 @@ export const confirmOtp = async (parent, args, context) => {
 
 export const resetPassword = async (parent, args, context) => {
   const { newPassword } = args;
+  await validation({ schema: newPasswordSchema, data: args });
+
   const email = context?.user?.email;
   const user = await userModel.findOne({ email, confirmed: true });
   if (!user) {
