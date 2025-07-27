@@ -2,7 +2,7 @@ import { openAI } from "../../../index.js";
 import noteModel from "../../DB/models/note.model.js";
 import userModel from "../../DB/models/user.model.js";
 import { validation } from "../../middleware/validation.js";
-import { addNoteSchema } from "./note.validate.js";
+import { addNoteSchema, idNoteSchema } from "./note.validate.js";
 
 // ========================== addNote ============================
 
@@ -22,11 +22,14 @@ export const addNote = async (parent, args, context) => {
 
 export const deleteNote = async (parent, args, context) => {
   const { _id } = args;
-    await validation({ schema: idNoteSchema, data: args });
-  
+  await validation({ schema: idNoteSchema, data: args });
+
   const id = context?.user?._id;
   if (!(await userModel.findById(id))) {
     throw new Error("unauthorized");
+  }
+  if (!(await noteModel.findById(_id))) {
+    throw new Error("note not exist", { cause: 404 });
   }
   const note = await noteModel.findByIdAndDelete(_id);
   return "note deleted successfully";
@@ -35,12 +38,16 @@ export const deleteNote = async (parent, args, context) => {
 
 export const getNote = async (parent, args, context) => {
   const { _id } = args;
-    await validation({ schema: idNoteSchema, data: args });
+  await validation({ schema: idNoteSchema, data: args });
   const id = context?.user?._id;
   if (!(await userModel.findById(id))) {
     throw new Error("unauthorized");
   }
   const note = await noteModel.findById(_id);
+
+  if (!note) {
+    throw new Error("note not exist", { cause: 404 });
+  }
   return note;
 };
 

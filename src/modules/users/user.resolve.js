@@ -45,8 +45,8 @@ export const logIn = async (parent, args) => {
 // ========================== profilePic ============================
 
 export const profilePic = async (parent, { imageUrl }, context) => {
-  console.log(context.user);
-
+  console.log("here",context.user);
+  
   if (!context.user) {
     throw new Error("token not found");
   }

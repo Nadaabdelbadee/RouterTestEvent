@@ -3,6 +3,7 @@ import { Router } from "express";
 import fs from "fs";
 import { authentication } from "./auth.js";
 import path from "path";
+import { log } from "console";
 
 const router = Router();
 const storage = multer.diskStorage({
@@ -31,7 +32,6 @@ router.post(
   "/upload",
   async (req, res, next) => {
     const authHeader = req.headers.authorization;
-
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
       return res.status(401).json({ error: "Token not found" });
     }

@@ -13,20 +13,24 @@ const bootstrap = async (app, express) => {
     createHandler({
       schema: schema,
       context: async (req, res) => {
-        const authHeader = req.headers.authorization || "";
+        const authHeader = req.headers?.authorization || "";
         if (!authHeader) {
           return { user: null };
         }
+
         if (authHeader.startsWith("Bearer ")) {
           const token = authHeader.split(" ")[1];
+
           try {
             const user = await authentication({ authorization: token });
-            return { user }; // ← ده بيوصل لكل الـ resolvers
+            console.log("user", user);
+
+            return { user };
           } catch (err) {
             return { user: null };
           }
         }
-        return {}; // ← بدون يوزر
+        return {};
       },
     })
   );

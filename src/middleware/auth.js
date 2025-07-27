@@ -2,8 +2,10 @@ import userModel from "../DB/models/user.model.js";
 import { verify } from "../utlis/verify.js";
 
 export const authentication = async ({ authorization }) => {
-  console.log("🚀 Token Received:", authorization);
+  console.log("authorization", authorization);
+
   const token = authorization;
+  console.log("token", token);
 
   if (!token) {
     throw new Error("token not found", { cause: 400 });
@@ -15,15 +17,20 @@ export const authentication = async ({ authorization }) => {
     token,
     SIGNATURE,
   });
-  console.log(decoded);
+console.log(decoded);
+
   if (!decoded?.id) {
     throw new Error("invalid token payload", { cause: 400 });
   }
   const user = await userModel.findById(decoded.id);
+  console.log(decoded.id);
+  
+  console.log("user",user);
+  
   if (!user) {
     throw new Error("user not found", { cause: 401 });
   }
-  console.log(user);
+  console.log("user", user);
 
   if (parseInt(user?.changePasswordAT?.getTime() / 1000) >= decoded.iat) {
     throw new Error("expired Token", { cause: 401 });
