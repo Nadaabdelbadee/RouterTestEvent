@@ -3,14 +3,20 @@ import dotenv from "dotenv";
 import path from "path";
 import bootstrap from "./src/app.controller.js";
 import router from "./src/middleware/multer.js";
+import OpenAI from "openai";
+import noteRouter from "./src/modules/notes/note.summarize.js";
 dotenv.config({ path: path.resolve(".env") });
 const app = express();
 const port = process.env.PORT;
 
-bootstrap(app, express);
+export const openAI = new OpenAI({
+  apiKey: process.env.OPENAIKEY,
+});
 
-app.use('/uploads', express.static('uploads'));
-app.use('/api', router);
+bootstrap(app, express);
+app.use("/", noteRouter);
+app.use("/uploads", express.static("uploads"));
+app.use("/api", router);
 
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));

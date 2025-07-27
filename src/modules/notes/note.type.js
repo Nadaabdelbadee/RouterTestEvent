@@ -7,5 +7,6 @@ export const noteData = new GraphQLObjectType({
     title: { type: GraphQLString },
     content: { type: GraphQLString },
     ownerId: { type: GraphQLID },
+    summary: { type: GraphQLString },
   },
 });
